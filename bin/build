@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+#!/usr/bin/env bash
+
+export NODE_MODULES="$(cd $(dirname "$0")/../node_modules && pwd)"
+source $NODE_MODULES/../bin/vars
+
+echo "> Building from '$SRC_PATH' to '$DIST_PATH'"
+
+$BABEL $SRC_PATH --out-dir $DIST_PATH "$@"

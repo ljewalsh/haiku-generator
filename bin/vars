@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+export SRC_PATH=${npm_package_srcPath:-src}
+export DIST_PATH=${npm_package_distPath:-dist}
+
+BABEL=$NODE_MODULES/babel-cli/bin/babel.js

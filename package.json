@@ -1,0 +1,48 @@
+{
+  "name": "haiku-generator",
+  "version": "1.0.0",
+  "description": "A cute lil' algorithm that finds tweets from twitter and constructs them into haiku",
+  "main": "index.js",
+  "srcPath": "src",
+  "distPath": "dist",
+  "scripts": {
+    "test": "",
+    "build": "./bin/build",
+    "start": "node ./dist/index.js"
+  },
+  "author": "Lucy-Jane Walsh",
+  "license": "ISC",
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "moment": "^2.22.2",
+    "ramda": "^0.25.0",
+    "syllable": "^3.0.0",
+    "twitter": "^1.7.1"
+  },
+  "devDependencies": {
+    "babel-plugin-transform-object-rest-spread": "6.26.0",
+    "babel-preset-env": "1.7.0",
+    "babel-register": "6.26.0"
+  },
+  "babel": {
+    "presets": [
+      "flow",
+      [
+        "env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ]
+    ],
+    "plugins": [
+      [
+        "transform-object-rest-spread",
+        {
+          "useBuiltIns": true
+        }
+      ]
+    ]
+  }
+}
