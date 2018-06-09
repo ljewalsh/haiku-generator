@@ -32,7 +32,6 @@ const getLine = async ({ client, keyword, numberOfSyllables, numberOfRequests, t
       numberOfRequests += 1
 
       forEach((tweet) => {
-        console.log(tweet)
         const numOfSyllables = getNumberOfSyllables(tweet.text)
         if (numOfSyllables === numberOfSyllables) {
           line = tweet.text

@@ -1,4 +1,5 @@
 import { map } from 'ramda'
+import { writeFile } from 'fs'
 
 const cleanTweet = (tweet) => {
   let cleanedTweet = tweet
@@ -24,7 +25,6 @@ const findTweets = async (client, queryString, sinceId) => {
       lang: 'en',
       since_id: sinceId
     })
-    console.log(results)
 
     return results.statuses
   }
