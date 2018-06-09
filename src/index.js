@@ -1,6 +1,7 @@
 import { forEach, last } from 'ramda'
 import moment from 'moment'
-import { createTwitterClient, getTweets } from './twitter'
+import createTwitterClient from './tweets/createTwitterClient'
+import getTweetsForLine from './tweets/getTweetsForLine'
 import keys from '../twitterKeys.json'
 import getKeyword from './keywords'
 import getNumberOfSyllables from './syllables'
@@ -24,13 +25,14 @@ const getLine = async ({ client, keyword, numberOfSyllables, numberOfRequests, t
         await waitRequesTimeout(client, keyword, numberOfSyllables)
       }
 
-      const tweets = await getTweets(client, keyword, sinceId)
+      const tweets = await getTweetsForLine(client, keyword, sinceId)
 
       const lastTweet = last(tweets)
       sinceId = lastTweet.id
       numberOfRequests += 1
 
       forEach((tweet) => {
+        console.log(tweet)
         const numOfSyllables = getNumberOfSyllables(tweet.text)
         if (numOfSyllables === numberOfSyllables) {
           line = tweet.text

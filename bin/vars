@@ -2,5 +2,8 @@
 
 export SRC_PATH=${npm_package_srcPath:-src}
 export DIST_PATH=${npm_package_distPath:-dist}
+export TESTS_NAME=${npm_package_testsPath:-'*.spec.js'}
 
 BABEL=$NODE_MODULES/babel-cli/bin/babel.js
+ESLINT=$NODE_MODULES/eslint/bin/eslint.js
+AVA=$NODE_MODULES/ava/cli.js

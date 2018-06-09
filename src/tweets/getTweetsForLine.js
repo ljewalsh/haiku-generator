@@ -1,13 +1,22 @@
+import { map } from 'ramda'
+
+const cleanTweet = (tweet) => {
+  let cleanedTweet = tweet
+  cleanedTweet = cleanedTweet.replace(/RT\s@\w+:\s/gi,"")
+  cleanedTweet = cleanedTweet.replace(/\shttps:\/\/.+($|\s)/gi, "")
+  cleanedTweet = cleanedTweet.replace(/@\w+\S/gi, "")
+  return cleanedTweet
+}
 
 const getTweetInfo = (tweet) => {
-  const cleanedTweet = cleanTweet(tweet.text)
+  //const cleanedTweet = cleanTweet(tweet.text)
   return {
     id: tweet.id,
-    text: cleanedTweet
+    text: tweet
   }
 }
 
-const getTweets = async (client, queryString, sinceId) => {
+const findTweets = async (client, queryString, sinceId) => {
   try {
     const results = await client.get('search/tweets', {
       q: queryString,
@@ -23,7 +32,14 @@ const getTweets = async (client, queryString, sinceId) => {
   }
 }
 
+const getTweetsForLine = async (client, queryString, sinceId) => {
+  const tweets = findTweets(client, queryString, sinceId)
+  return map((tweet) => getTweetInfo(tweet), tweets)
+}
+
 export {
-  getTweets,
+  findTweets,
   getTweetInfo
 }
+
+export default getTweetsForLine
