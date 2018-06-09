@@ -42,7 +42,9 @@ test('getTweetInfo returns the id and the cleaned text of each tweet', (t) => {
 
   t.is(firstTweetInfo.id, firstTweet.id)
   t.is(firstTweetInfo.text, cleanTweet(firstTweet.text))
+  t.falsy(firstTweetInfo.fake)
 
   t.is(secondTweetInfo.id, secondTweet.id)
   t.is(secondTweetInfo.text, cleanTweet(secondTweet.text))
+  t.falsy(secondTweetInfo.fake)
 })
