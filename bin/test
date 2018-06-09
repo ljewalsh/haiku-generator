@@ -5,5 +5,5 @@ source $NODE_MODULES/../bin/vars
 
 echo "> Starting AVA ${TESTS_NAME}"
 $AVA \
-$(find $SRC_PATH -name $TESTS_NAME) \
+$(find $DIST_PATH -name $TESTS_NAME) \
 "$@"
