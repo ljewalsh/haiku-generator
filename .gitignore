@@ -1,5 +1,4 @@
 dist/
 .idea
 node_modules/
-twitterKeys.json
-lastRequestInfo.json
+*.json
