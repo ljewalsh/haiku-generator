@@ -1,6 +1,6 @@
 import test from 'ava'
 import moment from 'moment'
-import { checkTimestamp } from './lastRequest'
+import checkTimestamp from './checkTimestamp'
 
 test('checkTimestamp returns with 0 when the timestamp is from more than 15 minutes ago', (t) => {
   const lastRequestTimestamp = moment().subtract(16, 'minute').utc()

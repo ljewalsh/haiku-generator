@@ -1,5 +1,9 @@
 import { map } from 'ramda'
 import { writeFile } from 'fs'
+import sleep from 'sleep'
+import checkTimestamp from '../lastRequest/checkTimestamp'
+import { getLastRequestInfo } from '../lastRequest'
+import findTweets from './findTweets'
 
 const cleanTweet = (tweet) => {
   let cleanedTweet = tweet
@@ -17,29 +21,20 @@ const getTweetInfo = (tweet) => {
   }
 }
 
-const findTweets = async (client, queryString, sinceId) => {
-  try {
-    const results = await client.get('search/tweets', {
-      q: queryString,
-      count: 100,
-      lang: 'en',
-      since_id: sinceId
-    })
-
-    return results.statuses
+const getTweetsForLine = async (client, queryString) => {
+  let { timestamp, sinceId, numberOfRequests } = await getLastRequestInfo()
+  numberOfRequests = checkTimestamp(numberOfRequests, timestamp)
+  if (numberOfRequests === 180) {
+    console.log('waiting request timeout')
+    sleep.sleep(900)
   }
-  catch(err){
-    throw new Error(err[0].message)
-  }
-}
 
-const getTweetsForLine = async (client, queryString, sinceId) => {
-  const tweets = await findTweets(client, queryString, sinceId)
-  return map((tweet) => getTweetInfo(tweet), tweets)
+  const tweetData = await findTweets(client, queryString, sinceId)
+  const tweets = map((tweet) => getTweetInfo(tweet), tweetData)
+  return { tweets, numberOfRequests }
 }
 
 export {
-  findTweets,
   cleanTweet,
   getTweetInfo
 }

@@ -1,4 +1,4 @@
-const keywords = ['stars', 'galaxy', 'moon', 'astronaut', 'gravity']
+const keywords = ['winter', 'spring', 'rose', 'snow', 'blossoms', 'cherry']
 
 const getKeyword = () => {
   const randomIndex = Math.floor((Math.random() * (keywords.length - 1)) + 1)

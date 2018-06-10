@@ -3,6 +3,7 @@ import { readFileSync } from 'fs'
 import keys from '../../twitterKeys'
 import getTweetsForLine, { cleanTweet, getTweetInfo, findTweets } from './getTweetsForLine'
 import createTwitterClient from './createTwitterClient'
+import stu from 'stu'
 
 test('cleanTweet removes any retweet strings from a tweet', (t) => {
   const tweet = 'RT @QueenMicheIIe: Got my moon lamp in the mail today so I had to do a photoshoot ✨'
@@ -51,21 +52,59 @@ test('getTweetInfo returns the id and the cleaned text of each tweet', (t) => {
   t.falsy(secondTweetInfo.fake)
 })
 
-test('findTweets returns tweets when given a queryString', async (t) => {
-  const queryString = 'node'
-  const sinceId = 0
-  const client = await createTwitterClient(keys)
-  const tweets = await findTweets(client, queryString, sinceId)
-  t.truthy(tweets.length > 0)
-})
-
 test('getTweetsForLine returns the id and text of tweets given a queryString', async (t) => {
   const queryString = 'node'
   const sinceId = 0
   const client = await createTwitterClient(keys)
-  const tweets = await getTweetsForLine(client, queryString, sinceId)
+  const { tweets } = await getTweetsForLine(client, queryString, sinceId)
   const firstTweet = tweets[0]
   t.truthy(tweets.length > 0)
   t.truthy(firstTweet.id)
   t.truthy(firstTweet.text)
+})
+
+test('sleep is called when the request number is 180', async (t) => {
+
+  let client, getTweetsForLine, sleep, getLastRequestInfo, findTweets, checkTimestamp
+  stu((mock, require) => {
+    sleep = mock('sleep').sleep
+    findTweets = mock('./findTweets').default
+    getLastRequestInfo = mock('../lastRequest').getLastRequestInfo
+    client = mock('../tweets/createTwitterClient').default
+    getTweetsForLine = require('../tweets/getTweetsForLine').default
+  }).mock()
+
+  client.resolves()
+  findTweets.resolves([])
+  getLastRequestInfo.resolves({
+    timestamp: new Date(),
+    sinceId: '',
+    numberOfRequests: 180
+  })
+
+  await getTweetsForLine(client, 'fakeKeyword')
+  t.is(sleep.callCount, 1)
+})
+
+test('sleep is not called when the request number is less than 180', async (t) => {
+  let client, getTweetsForLine, sleep, getLastRequestInfo, findTweets
+  stu((mock, require) => {
+    sleep = mock('sleep').sleep
+    findTweets = mock('./findTweets').default
+    getLastRequestInfo = mock('../lastRequest').getLastRequestInfo
+    client = mock('./createTwitterClient').default
+    getTweetsForLine = require('../tweets/getTweetsForLine').default
+  }).mock()
+
+  client.resolves()
+  findTweets.resolves([])
+  getLastRequestInfo.resolves({
+    timestamp: new Date(),
+    sinceId: '',
+    numberOfRequests: 179
+  })
+
+  await getTweetsForLine(client, 'fakeKeyword')
+
+  t.is(sleep.callCount, 0)
 })

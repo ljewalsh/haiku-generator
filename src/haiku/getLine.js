@@ -1,24 +1,18 @@
 import { forEach, last } from 'ramda'
-import { checkTimestamp, storeRequestInfo } from '../lastRequest'
+import { storeRequestInfo } from '../lastRequest'
 import getTweetsForLine from '../tweets/getTweetsForLine'
 import getNumberOfSyllables from './getSyllableCount'
-import sleep from 'sleep'
 
-const getLine = async ({ client, keyword, numberOfSyllables, numberOfRequests, timestamp, sinceId }) => {
+const getLine = async ({ client, keyword, numberOfSyllables }) => {
+
   try {
     let line = ''
     while (line === '') {
-      numberOfRequests = checkTimestamp(numberOfRequests, timestamp)
-      if (numberOfRequests === 180) {
-        console.log('waiting request timeout')
-        sleep.sleep(900)
-      }
 
-      const tweets = await getTweetsForLine(client, keyword, sinceId)
+      let { numberOfRequests, tweets } = await getTweetsForLine(client, keyword)
 
       const lastTweet = last(tweets)
-      sinceId = lastTweet.id
-      numberOfRequests += 1
+      const sinceId = lastTweet.id
       await storeRequestInfo(numberOfRequests, sinceId)
 
       forEach((tweet) => {

@@ -9,6 +9,7 @@ const checkTimestamp = (numberOfRequests, timestamp) => {
   if (lastRequestDateTime < fifteenMinutesAgo){
     numberOfRequests = 0
   }
+  console.log(numberOfRequests)
   return numberOfRequests
 }
 
