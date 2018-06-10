@@ -1,6 +1,8 @@
 import test from 'ava'
 import { readFileSync } from 'fs'
-import { cleanTweet, getTweetInfo } from './getTweetsForLine'
+import keys from '../../twitterKeys'
+import { cleanTweet, getTweetInfo, findTweets } from './getTweetsForLine'
+import createTwitterClient from './createTwitterClient'
 
 test('cleanTweet removes any retweet strings from a tweet', (t) => {
   const tweet = 'RT @QueenMicheIIe: Got my moon lamp in the mail today so I had to do a photoshoot ✨'
@@ -47,4 +49,12 @@ test('getTweetInfo returns the id and the cleaned text of each tweet', (t) => {
   t.is(secondTweetInfo.id, secondTweet.id)
   t.is(secondTweetInfo.text, cleanTweet(secondTweet.text))
   t.falsy(secondTweetInfo.fake)
+})
+
+test('findTweets returns 100 tweets when given a queryString', async (t) => {
+  const client = await createTwitterClient(keys)
+  const queryString = 'node'
+  const sinceId = 0
+  const tweets = await findTweets(client, queryString, sinceId)
+  t.truthy(tweets.length > 0)
 })
