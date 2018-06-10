@@ -1,7 +1,7 @@
 import test from 'ava'
 import { readFileSync } from 'fs'
 import keys from '../../twitterKeys'
-import { cleanTweet, getTweetInfo, findTweets } from './getTweetsForLine'
+import getTweetsForLine, { cleanTweet, getTweetInfo, findTweets } from './getTweetsForLine'
 import createTwitterClient from './createTwitterClient'
 
 test('cleanTweet removes any retweet strings from a tweet', (t) => {
@@ -51,10 +51,21 @@ test('getTweetInfo returns the id and the cleaned text of each tweet', (t) => {
   t.falsy(secondTweetInfo.fake)
 })
 
-test('findTweets returns 100 tweets when given a queryString', async (t) => {
-  const client = await createTwitterClient(keys)
+test('findTweets returns tweets when given a queryString', async (t) => {
   const queryString = 'node'
   const sinceId = 0
+  const client = await createTwitterClient(keys)
   const tweets = await findTweets(client, queryString, sinceId)
   t.truthy(tweets.length > 0)
+})
+
+test('getTweetForLine returns the id and text of tweets given a queryString', async (t) => {
+  const queryString = 'node'
+  const sinceId = 0
+  const client = await createTwitterClient(keys)
+  const tweets = await getTweetsForLine(client, queryString, sinceId)
+  const firstTweet = tweets[0]
+  t.truthy(tweets.length > 0)
+  t.truthy(firstTweet.id)
+  t.truthy(firstTweet.text)
 })
