@@ -59,7 +59,7 @@ test('findTweets returns tweets when given a queryString', async (t) => {
   t.truthy(tweets.length > 0)
 })
 
-test('getTweetForLine returns the id and text of tweets given a queryString', async (t) => {
+test('getTweetsForLine returns the id and text of tweets given a queryString', async (t) => {
   const queryString = 'node'
   const sinceId = 0
   const client = await createTwitterClient(keys)
