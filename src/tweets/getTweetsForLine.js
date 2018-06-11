@@ -1,16 +1,17 @@
-import { map } from 'ramda'
-import { writeFile } from 'fs'
+import { last, map } from 'ramda'
 import sleep from 'sleep'
-import checkTimestamp from '../lastRequest/checkTimestamp'
-import { getLastRequestInfo } from '../lastRequest'
+import getLastRequestInfo from '../lastRequest/getLastRequestInfo'
 import findTweets from './findTweets'
+import storeRequestInfo from '../lastRequest/storeRequestInfo'
+import cleanTweet from './cleanTweet'
 
-const cleanTweet = (tweet) => {
-  let cleanedTweet = tweet
-  cleanedTweet = cleanedTweet.replace(/RT\s@\w+:\s/gi,"")
-  cleanedTweet = cleanedTweet.replace(/\shttps:\/\/(\w+\.\w+|\w+|$)/gi, "")
-  cleanedTweet = cleanedTweet.replace(/\s@\w+($|\w+)/gi, "")
-  return cleanedTweet
+const checkForTimeout = async (numberOfRequests) => {
+  if (numberOfRequests === 180) {
+    console.log('waiting request timeout')
+    await sleep.sleep(900)
+    return 0
+  }
+  return numberOfRequests
 }
 
 const getTweetInfo = (tweet) => {
@@ -21,22 +22,19 @@ const getTweetInfo = (tweet) => {
   }
 }
 
-const getTweetsForLine = async (client, queryString) => {
-  let { timestamp, sinceId, numberOfRequests } = await getLastRequestInfo()
-  numberOfRequests = checkTimestamp(numberOfRequests, timestamp)
-  if (numberOfRequests === 180) {
-    console.log('waiting request timeout')
-    sleep.sleep(900)
-  }
+const getTweetsForLine = async (client, queryString, lastRequestFile) => {
+  let { sinceId, numberOfRequests } = await getLastRequestInfo(lastRequestFile)
 
-  const tweetData = await findTweets(client, queryString, sinceId)
-  const tweets = map((tweet) => getTweetInfo(tweet), tweetData)
-  return { tweets, numberOfRequests }
-}
+  numberOfRequests = await checkForTimeout(numberOfRequests)
 
-export {
-  cleanTweet,
-  getTweetInfo
+  const results = await findTweets(client, queryString, sinceId)
+
+  const lastTweet = last(results)
+  sinceId = lastTweet.id
+
+  await storeRequestInfo(numberOfRequests, sinceId, lastRequestFile)
+
+  return map((tweet) => getTweetInfo(tweet), results)
 }
 
 export default getTweetsForLine

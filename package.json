@@ -8,12 +8,15 @@
   "testsPath": "*.spec.js",
   "scripts": {
     "test": "./bin/test",
+    "lint": "./bin/lint",
+    "test-only": "./bin/test-only",
     "build": "./bin/build",
     "start": "node ./dist/index.js"
   },
   "author": "Lucy-Jane Walsh",
   "license": "ISC",
   "dependencies": {
+    "@mishguru/eslint-config": "^4.1.0",
     "ava": "^0.25.0",
     "babel-cli": "^6.26.0",
     "moment": "^2.22.2",

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+export NODE_MODULES="$(cd $(dirname "$0")/../node_modules && pwd)"
+source $NODE_MODULES/../bin/vars
+
+echo "> Running eslint"
+exec $ESLINT \
+  --ext .jsx --ext .js \
+  -c $NODE_MODULES/@mishguru/eslint-config/index.js \
+  "$@" \
+  $SRC_PATH $TESTS_PATH

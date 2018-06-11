@@ -1,110 +1,38 @@
 import test from 'ava'
-import { readFileSync } from 'fs'
-import keys from '../../twitterKeys'
-import getTweetsForLine, { cleanTweet, getTweetInfo, findTweets } from './getTweetsForLine'
-import createTwitterClient from './createTwitterClient'
 import stu from 'stu'
 
-test('cleanTweet removes any retweet strings from a tweet', (t) => {
-  const tweet = 'RT @QueenMicheIIe: Got my moon lamp in the mail today so I had to do a photoshoot ✨'
-  const cleanedTweet = cleanTweet(tweet)
-  const expectedTweet = 'Got my moon lamp in the mail today so I had to do a photoshoot ✨'
-  t.is(cleanedTweet, expectedTweet)
-})
+test.beforeEach(async (t) => {
+  let getTweetsForLine, findTweets, sleep, storeRequestInfo, getRequestInfo
+  stu((mock, require) => {
+    sleep = mock('sleep')
+    findTweets = mock('./findTweets').default
+    getRequestInfo = mock('../lastRequest/getLastRequestInfo').default
+    storeRequestInfo = mock('../lastRequest/storeRequestInfo').default
+    getTweetsForLine = require('./getTweetsForLine').default
+  }).mock()
 
-test('cleanTweet removes any mentions from a tweet (whether in the middle or end of a tweet)', (t) => {
-  const tweet = 'Got my moon lamp in the mail today @pauatientha so I had to do a photoshoot ✨ @ljewalsh'
-  const cleanedTweet = cleanTweet(tweet)
-  const expectedTweet = 'Got my moon lamp in the mail today so I had to do a photoshoot ✨'
-  t.is(cleanedTweet, expectedTweet)
-})
-
-test('cleanTweet removes any urls from a tweet (whether in the middle or end of the tweet)', (t) => {
-  const tweet = 'Got my moon lamp https://moonlamp in the mail today so I had to do a photoshoot ✨ https://cool.com'
-  const cleanedTweet = cleanTweet(tweet)
-  const expectedTweet = 'Got my moon lamp in the mail today so I had to do a photoshoot ✨'
-  t.is(cleanedTweet, expectedTweet)
-})
-
-test('getTweetInfo returns the id and the cleaned text of each tweet', (t) => {
-  const testTweets = [{
-    id: '1005340141420937200',
-    text: '@AdriMakesArt The closest thing to that, in my experience, are artist discord servers. That\'s the only place where… https://t.co/ia1UqNwqff',
-    fake: 'nope'
-  }, {
-    id: '803342710006566900',
-    text: 'RT @UberFacts: During the Apollo 11 mission, which landed the first two humans on the moon, the average age in the NASA control room was ju…',
-    fake: 'nope'
-  }]
-
-  const firstTweet = testTweets[0]
-  const secondTweet = testTweets[1]
-
-  const firstTweetInfo = getTweetInfo(firstTweet)
-  const secondTweetInfo = getTweetInfo(secondTweet)
-
-  t.is(firstTweetInfo.id, firstTweet.id)
-  t.is(firstTweetInfo.text, cleanTweet(firstTweet.text))
-  t.falsy(firstTweetInfo.fake)
-
-  t.is(secondTweetInfo.id, secondTweet.id)
-  t.is(secondTweetInfo.text, cleanTweet(secondTweet.text))
-  t.falsy(secondTweetInfo.fake)
-})
-
-test('getTweetsForLine returns the id and text of tweets given a queryString', async (t) => {
   const queryString = 'node'
   const sinceId = 0
-  const client = await createTwitterClient(keys)
-  const { tweets } = await getTweetsForLine(client, queryString, sinceId)
-  const firstTweet = tweets[0]
-  t.truthy(tweets.length > 0)
-  t.truthy(firstTweet.id)
-  t.truthy(firstTweet.text)
+  const timestamp = new Date()
+  getRequestInfo.resolves({ queryString, sinceId, timestamp})
+
+  findTweets.resolves([{ id: '1234', text: 'fakeTweet' }])
+
+
+  t.context = {
+    ...t.context,
+    getTweetsForLine,
+    storeRequestInfo,
+    getRequestInfo,
+    sleep,
+    queryString,
+    sinceId,
+    timestamp
+  }
 })
 
-test('sleep is called when the request number is 180', async (t) => {
-
-  let client, getTweetsForLine, sleep, getLastRequestInfo, findTweets, checkTimestamp
-  stu((mock, require) => {
-    sleep = mock('sleep').sleep
-    findTweets = mock('./findTweets').default
-    getLastRequestInfo = mock('../lastRequest').getLastRequestInfo
-    client = mock('../tweets/createTwitterClient').default
-    getTweetsForLine = require('../tweets/getTweetsForLine').default
-  }).mock()
-
-  client.resolves()
-  findTweets.resolves([])
-  getLastRequestInfo.resolves({
-    timestamp: new Date(),
-    sinceId: '',
-    numberOfRequests: 180
-  })
-
-  await getTweetsForLine(client, 'fakeKeyword')
-  t.is(sleep.callCount, 1)
-})
-
-test('sleep is not called when the request number is less than 180', async (t) => {
-  let client, getTweetsForLine, sleep, getLastRequestInfo, findTweets
-  stu((mock, require) => {
-    sleep = mock('sleep').sleep
-    findTweets = mock('./findTweets').default
-    getLastRequestInfo = mock('../lastRequest').getLastRequestInfo
-    client = mock('./createTwitterClient').default
-    getTweetsForLine = require('../tweets/getTweetsForLine').default
-  }).mock()
-
-  client.resolves()
-  findTweets.resolves([])
-  getLastRequestInfo.resolves({
-    timestamp: new Date(),
-    sinceId: '',
-    numberOfRequests: 179
-  })
-
-  await getTweetsForLine(client, 'fakeKeyword')
-
-  t.is(sleep.callCount, 0)
+test('storeRequestInfo is called by the function', async (t) => {
+  const { getTweetsForLine, storeRequestInfo, queryString, sinceId } = t.context
+  await getTweetsForLine({}, queryString, sinceId)
+  t.is(storeRequestInfo.callCount, 1)
 })

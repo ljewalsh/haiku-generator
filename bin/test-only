@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+export NODE_MODULES="$(cd $(dirname "$0")/../node_modules && pwd)"
+source $NODE_MODULES/../bin/vars
+
+echo "> Starting AVA"
+$AVA "$@"

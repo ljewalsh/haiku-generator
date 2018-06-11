@@ -3,7 +3,7 @@ import syllable from 'syllable'
 
 const getSyllableCount = (tweet) => {
   let numberOfSyllables = 0
-  const words = tweet.split(" ")
+  const words = tweet.split(' ')
   forEach((word) => {
     numberOfSyllables += syllable(word)
   }, words)
