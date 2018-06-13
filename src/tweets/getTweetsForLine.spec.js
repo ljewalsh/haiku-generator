@@ -2,37 +2,80 @@ import test from 'ava'
 import stu from 'stu'
 
 test.beforeEach(async (t) => {
-  let getTweetsForLine, findTweets, sleep, storeRequestInfo, getRequestInfo
+  let getTweetsForLine, findTweets, storeRequestInfo, getLastRequestInfo
   stu((mock, require) => {
-    sleep = mock('sleep')
     findTweets = mock('./findTweets').default
-    getRequestInfo = mock('../lastRequest/getLastRequestInfo').default
+    getLastRequestInfo = mock('../lastRequest/getLastRequestInfo').default
     storeRequestInfo = mock('../lastRequest/storeRequestInfo').default
     getTweetsForLine = require('./getTweetsForLine').default
   }).mock()
 
   const queryString = 'node'
-  const sinceId = 0
-  const timestamp = new Date()
-  getRequestInfo.resolves({ queryString, sinceId, timestamp})
+  const firstSinceId = 12
+  const secondSinceId = 13
+  const numberOfRequests = 0
+  getLastRequestInfo.resolves({ sinceId: firstSinceId, numberOfRequests })
+  storeRequestInfo.resolves()
 
-  findTweets.resolves([{ id: '1234', text: 'fakeTweet' }])
+  findTweets.resolves([{ id: secondSinceId, text: 'fakeTweet' }])
 
 
   t.context = {
     ...t.context,
     getTweetsForLine,
     storeRequestInfo,
-    getRequestInfo,
-    sleep,
+    getLastRequestInfo,
+    findTweets,
+    numberOfRequests,
     queryString,
-    sinceId,
-    timestamp
+    firstSinceId,
+    secondSinceId
   }
 })
 
-test('storeRequestInfo is called by the function', async (t) => {
-  const { getTweetsForLine, storeRequestInfo, queryString, sinceId } = t.context
-  await getTweetsForLine({}, queryString, sinceId)
+test('getLastRequestInfo is called with the correct args', async (t) => {
+  const {
+    getTweetsForLine,
+    getLastRequestInfo,
+    queryString
+  } = t.context
+
+  const fakeFile = 'requestFile'
+  await getTweetsForLine(null, queryString, fakeFile)
+  t.is(getLastRequestInfo.callCount, 1)
+  t.truthy(getLastRequestInfo.calledWith(fakeFile))
+})
+
+test('findTweets in called by the function with the correct args', async (t) => {
+  const {
+    getTweetsForLine,
+    findTweets,
+    queryString,
+    firstSinceId
+  } = t.context
+
+  const fakeFile = 'requestFile'
+  await getTweetsForLine(null, queryString, fakeFile)
+
+  t.is(findTweets.callCount, 1)
+
+  const expectedFindTweetsArgs = [ null, queryString, firstSinceId ]
+  t.deepEqual(findTweets.args, [ expectedFindTweetsArgs ])
+})
+
+test('storeRequestInfo is called with the correct args', async (t) => {
+  const {
+    getTweetsForLine,
+    storeRequestInfo,
+    queryString,
+    secondSinceId,
+    numberOfRequests
+  } = t.context
+
+  const fakeFile = 'requestFile'
+  await getTweetsForLine(null, queryString, fakeFile)
   t.is(storeRequestInfo.callCount, 1)
+
+  const expectedStoreRequestInfoArgs = [ numberOfRequests + 1, secondSinceId, fakeFile ]
+  t.deepEqual(storeRequestInfo.args, [ expectedStoreRequestInfoArgs  ])
 })

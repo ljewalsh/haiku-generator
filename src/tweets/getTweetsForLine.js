@@ -31,6 +31,7 @@ const getTweetsForLine = async (client, queryString, lastRequestFile) => {
 
   const lastTweet = last(results)
   sinceId = lastTweet.id
+  numberOfRequests += 1
 
   await storeRequestInfo(numberOfRequests, sinceId, lastRequestFile)
 
