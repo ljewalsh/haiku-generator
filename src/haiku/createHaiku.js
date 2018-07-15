@@ -10,7 +10,11 @@ const createHaiku = async () => {
   try {
     const firstLine = await getLine({ client, keyword, numberOfSyllables: 5 })
     const secondLine = await getLine({ client, keyword, numberOfSyllables: 7 })
-    const thirdLine = await getLine({ client, keyword, numberOfSyllables: 5 })
+    let thirdLine = await getLine({ client, keyword, numberOfSyllables: 5 })
+
+    while (thirdLine === firstLine){
+      thirdLine = await getLine({ client, keyword, numberOfSyllables: 5 })
+    }
 
     return [ firstLine, secondLine, thirdLine ]
   } catch (err) {
