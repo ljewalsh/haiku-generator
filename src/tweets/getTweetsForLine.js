@@ -1,8 +1,8 @@
 import { last, map } from 'ramda'
 import sleep from 'sleep'
-import getLastRequestInfo from '../lastRequest/getLastRequestInfo'
+import getLastRequestInfo from '../utils/lastRequest/getLastRequestInfo'
 import findTweets from './findTweets'
-import storeRequestInfo from '../lastRequest/storeRequestInfo'
+import storeRequestInfo from '../utils/lastRequest/storeRequestInfo'
 import cleanTweet from './cleanTweet'
 
 const checkForTimeout = async (numberOfRequests) => {

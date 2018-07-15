@@ -1,13 +1,12 @@
 import Promise from 'bluebird'
-import { forEach } from 'ramda'
 import getTweetsForLine from '../tweets/getTweetsForLine'
 import getNumberOfSyllables from './getSyllableCount'
 import saveTweet from './saveTweet'
 
-const getLine = async ({ client, keyword, numberOfSyllables }) => {
+const getLine = async ({ client, keyword, numberOfSyllables, lastLine }) => {
   try {
     let line = ''
-    while (line === '') {
+    while (line === '' && line !== lastLine ) {
       const tweets = await getTweetsForLine(client, keyword)
 
       await Promise.each(tweets, (tweet) => {

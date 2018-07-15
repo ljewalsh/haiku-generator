@@ -1,7 +1,7 @@
-import getLine from './getLine'
+import getLine from '../utils/getLine'
 import keys from '../../twitterKeys.json'
 import createTwitterClient from '../tweets/createTwitterClient'
-import getKeyword from '../keywords'
+import getKeyword from '../utils/keywords'
 
 const createHaiku = async () => {
   const client = await createTwitterClient(keys)

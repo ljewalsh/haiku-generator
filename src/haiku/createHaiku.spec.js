@@ -5,8 +5,8 @@ test('', async (t) => {
   let createHaiku, getLine, createTwitterClient, getKeyword
   stu((mock, require) => {
     createTwitterClient = mock('../tweets/createTwitterClient').default
-    getLine = mock('./getLine').default
-    getKeyword = mock('../keywords').default
+    getLine = mock('../utils/getLine').default
+    getKeyword = mock('../utils/keywords').default
     createHaiku = require('./createHaiku').default
   }).mock()
 
