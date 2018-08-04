@@ -11,7 +11,9 @@ test('', async (t) => {
   }).mock()
 
   createTwitterClient.resolves()
-  getLine.resolves()
+  getLine.onFirstCall().resolves('first line')
+  getLine.onSecondCall().resolves('second line')
+  getLine.onThirdCall().resolves('third line')
   getKeyword.returns('keyword')
 
   const haiku = await createHaiku()

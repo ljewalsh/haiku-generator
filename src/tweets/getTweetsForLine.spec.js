@@ -5,8 +5,8 @@ test.beforeEach(async (t) => {
   let getTweetsForLine, findTweets, storeRequestInfo, getLastRequestInfo
   stu((mock, require) => {
     findTweets = mock('./findTweets').default
-    getLastRequestInfo = mock('../lastRequest/getLastRequestInfo').default
-    storeRequestInfo = mock('../lastRequest/storeRequestInfo').default
+    getLastRequestInfo = mock('../utils/lastRequest/getLastRequestInfo').default
+    storeRequestInfo = mock('../utils/lastRequest/storeRequestInfo').default
     getTweetsForLine = require('./getTweetsForLine').default
   }).mock()
 
