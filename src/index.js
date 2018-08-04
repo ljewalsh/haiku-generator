@@ -1,9 +1,9 @@
-import createSonnet from './sonnet/createSonnet'
+import createHaiku from './haiku/createHaiku'
 
-createSonnet().then((lines) => {
+createHaiku().then((lines) => {
   lines.forEach((line) => console.log(line))
 })
 
 export {
-  createSonnet
+  createHaiku
 }
