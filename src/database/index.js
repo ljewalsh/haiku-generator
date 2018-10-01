@@ -5,28 +5,28 @@ const url = "mongodb://localhost:27017/"
 
 const mongo = promisify(MongoClient)
 
-const createTweetTable = async () => {
+const connectToDb = async () => {
   const client = await mongo.connect(url)
-  const db = client.db("mydb")
-  await db.createCollection('tweets')
-  client.close()
+  return client.db("mydb")
 }
 
-const saveTweet = async (tweet) => {
-  const client = await mongo.connect(url)
-  const db = client.db("mydb")
-  await db.collection('tweets').insertOne(tweet)
-  client.close()
+const createTable = async (tableName) => {
+  const db = await connectToDb()
+  await db.createCollection(tableName)
 }
 
-const findTweet = async (tweetId) => {
-  const client = await mongo.connect(url)
-  const db = client.db("mydb")
-  return db.collection('tweets').findOne({ id: tweetId })
+const saveItem = async (tableName, item) => {
+  const db = await connectToDb()
+  await db.collection(tableName).insertOne(item)
+}
+
+const findItem = async (tableName, itemId) => {
+  const db = await connectToDb()
+  return db.collection(tableName).findOne({ id: itemId })
 }
 
 export {
-  saveTweet,
-  createTweetTable,
-  findTweet
+  saveItem,
+  createTable,
+  findItem
 }

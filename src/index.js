@@ -1,13 +1,17 @@
 import { CronJob } from 'cron'
 import createHaiku from './haiku/createHaiku'
+import { createTable, saveItem } from './database'
 
 const job = new CronJob({
   cronTime: '7-59/15 * * * *',
-  onTick: () => {
-    return createHaiku().then(console.log)
+  onTick: async () => {
+    const haiku = await createHaiku()
+    await saveItem('haikus', haiku)
+    console.log(haiku)
   },
       start: false
 })
 
-job.start()
+
+createTable('haikus').then(job.start())
 
