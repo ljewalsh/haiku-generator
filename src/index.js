@@ -1,9 +1,13 @@
+import { CronJob } from 'cron'
 import createHaiku from './haiku/createHaiku'
 
-createHaiku().then((lines) => {
-  lines.forEach((line) => console.log(line))
+const job = new CronJob({
+  cronTime: '7-59/15 * * * *',
+  onTick: () => {
+    return createHaiku().then(console.log)
+  },
+      start: false
 })
 
-export {
-  createHaiku
-}
+job.start()
+
