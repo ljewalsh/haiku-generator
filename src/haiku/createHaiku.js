@@ -1,19 +1,20 @@
-import getLine from '../utils/getLine'
+import findLineForHaiku from '../utils/findLineForHaiku'
 import keys from '../../twitterKeys.json'
 import createTwitterClient from '../tweets/createTwitterClient'
 import getKeyword from '../utils/keywords'
 
+const client = createTwitterClient(keys).then()
+
 const createHaiku = async () => {
-  const client = await createTwitterClient(keys)
   const keyword = getKeyword()
 
   try {
-    const firstLine = await getLine({ client, keyword, numberOfSyllables: 5 })
-    const secondLine = await getLine({ client, keyword, numberOfSyllables: 7 })
-    let thirdLine = await getLine({ client, keyword, numberOfSyllables: 5 })
+    const firstLine = await findLineForHaiku({ client, keyword, numberOfSyllables: 5 })
+    const secondLine = await findLineForHaiku({ client, keyword, numberOfSyllables: 7 })
+    let thirdLine = await findLineForHaiku({ client, keyword, numberOfSyllables: 5 })
 
     while (thirdLine === firstLine){
-      thirdLine = await getLine({ client, keyword, numberOfSyllables: 5 })
+      thirdLine = await findLineForHaiku({ client, keyword, numberOfSyllables: 5 })
     }
 
     return [ firstLine, secondLine, thirdLine ]

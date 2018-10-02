@@ -1,10 +1,8 @@
-import { readFileSync } from 'fs'
+import { findLastItem, findItems } from '../../database'
 import checkTimestamp from './checkTimestamp'
 
-const LAST_REQUEST_INFO = './lastRequestInfo.json'
-
-const getLastRequestInfo = async (jsonFile = LAST_REQUEST_INFO) => {
-  const { numberOfRequests, sinceId, timestamp } = JSON.parse(readFileSync(jsonFile, 'utf8'))
+const getLastRequestInfo = async (tableName) => {
+  const { timestamp, numberOfRequests, sinceId } = await findLastItem(tableName)
   const checkedNumberOfRequests = checkTimestamp(numberOfRequests, timestamp)
   return {
     sinceId,

@@ -13,5 +13,9 @@ const job = new CronJob({
 })
 
 
-createTable('haikus').then(job.start())
+createTable('haikus').then(
+  createTable('tweets').then(
+    job.start()
+  )
+)
 

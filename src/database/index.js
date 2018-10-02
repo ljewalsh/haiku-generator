@@ -20,13 +20,26 @@ const saveItem = async (tableName, item) => {
   await db.collection(tableName).insertOne(item)
 }
 
-const findItem = async (tableName, itemId) => {
+const findItemById = async (tableName, itemId) => {
   const db = await connectToDb()
   return db.collection(tableName).findOne({ id: itemId })
+}
+
+const findLastItem = async (tableName) => {
+  const db = await connectToDb()
+  const results = db.collection(tableName).find().limit(1).sort({$natural:-1})
+  return results.next()
+}
+
+const findItems = async (tableName) => {
+  const db = await connectToDb()
+  return db.collection(tableName).find().toArray()
 }
 
 export {
   saveItem,
   createTable,
-  findItem
+  findItemById,
+  findLastItem,
+  findItems
 }

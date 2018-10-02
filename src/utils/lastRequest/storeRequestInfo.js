@@ -1,13 +1,11 @@
-import { writeFileSync } from 'fs'
+import { saveItem } from '../../database'
 
-const LAST_REQUEST_INFO = './lastRequestInfo.json'
-
-const storeRequestInfo = async (numberOfRequests, sinceId, jsonFile = LAST_REQUEST_INFO) => {
-  return writeFileSync(jsonFile, JSON.stringify({
-    numberOfRequests: numberOfRequests,
-    sinceId: sinceId,
+const storeRequestInfo = async (tableName, numberOfRequests, sinceId) => {
+  return saveItem(tableName, {
+    numberOfRequests,
+    sinceId,
     timestamp: new Date()
-  }), 'utf8')
+  })
 }
 
 export default storeRequestInfo
