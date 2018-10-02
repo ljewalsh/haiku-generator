@@ -22,7 +22,7 @@ const saveItem = async (tableName, item) => {
 
 const findItemById = async (tableName, itemId) => {
   const db = await connectToDb()
-  return db.collection(tableName).findOne({ id: itemId })
+  return db.collection(tableName).find({ id: itemId }).next()
 }
 
 const findLastItem = async (tableName) => {

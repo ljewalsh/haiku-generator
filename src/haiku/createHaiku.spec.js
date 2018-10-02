@@ -2,15 +2,13 @@ import test from 'ava'
 import stu from 'stu'
 
 test('', async (t) => {
-  let createHaiku, getLine, createTwitterClient, getKeyword
+  let createHaiku, getLine, getKeyword
   stu((mock, require) => {
-    createTwitterClient = mock('../tweets/createTwitterClient').default
-    getLine = mock('../utils/getLine').default
+    getLine = mock('../utils/findLineForHaiku').default
     getKeyword = mock('../utils/keywords').default
     createHaiku = require('./createHaiku').default
   }).mock()
 
-  createTwitterClient.resolves()
   getLine.onFirstCall().resolves('first line')
   getLine.onSecondCall().resolves('second line')
   getLine.onThirdCall().resolves('third line')
@@ -18,7 +16,6 @@ test('', async (t) => {
 
   const haiku = await createHaiku()
 
-  t.is(createTwitterClient.callCount, 1)
   t.is(getLine.callCount, 3)
   const firstCall = getLine.args[0]
   const secondCall = getLine.args[1]

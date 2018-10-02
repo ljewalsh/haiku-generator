@@ -1,4 +1,4 @@
-import { findLastItem, findItems } from '../../database'
+import { findLastItem } from '../../database'
 import checkTimestamp from './checkTimestamp'
 
 const getLastRequestInfo = async (tableName) => {

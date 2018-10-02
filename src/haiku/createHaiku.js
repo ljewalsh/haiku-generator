@@ -1,11 +1,7 @@
 import findLineForHaiku from '../utils/findLineForHaiku'
-import keys from '../../twitterKeys.json'
-import createTwitterClient from '../tweets/createTwitterClient'
 import getKeyword from '../utils/keywords'
 
-const client = createTwitterClient(keys).then()
-
-const createHaiku = async () => {
+const createHaiku = async (client) => {
   const keyword = getKeyword()
 
   try {

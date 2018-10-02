@@ -33,19 +33,6 @@ test.beforeEach(async (t) => {
   }
 })
 
-test('getLastRequestInfo is called with the correct args', async (t) => {
-  const {
-    getTweetsForLine,
-    getLastRequestInfo,
-    queryString
-  } = t.context
-
-  const fakeFile = 'requestFile'
-  await getTweetsForLine(null, queryString, fakeFile)
-  t.is(getLastRequestInfo.callCount, 1)
-  t.truthy(getLastRequestInfo.calledWith(fakeFile))
-})
-
 test('findTweets in called by the function with the correct args', async (t) => {
   const {
     getTweetsForLine,
@@ -54,8 +41,7 @@ test('findTweets in called by the function with the correct args', async (t) => 
     firstSinceId
   } = t.context
 
-  const fakeFile = 'requestFile'
-  await getTweetsForLine(null, queryString, fakeFile)
+  await getTweetsForLine(null, queryString)
 
   t.is(findTweets.callCount, 1)
 
@@ -72,10 +58,9 @@ test('storeRequestInfo is called with the correct args', async (t) => {
     numberOfRequests
   } = t.context
 
-  const fakeFile = 'requestFile'
-  await getTweetsForLine(null, queryString, fakeFile)
+  await getTweetsForLine(null, queryString)
   t.is(storeRequestInfo.callCount, 1)
 
-  const expectedStoreRequestInfoArgs = [ numberOfRequests + 1, secondSinceId, fakeFile ]
+  const expectedStoreRequestInfoArgs = [ 'requests', numberOfRequests + 1, secondSinceId ]
   t.deepEqual(storeRequestInfo.args, [ expectedStoreRequestInfoArgs  ])
 })

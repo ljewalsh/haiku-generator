@@ -22,8 +22,8 @@ const getTweetInfo = (tweet) => {
   }
 }
 
-const getTweetsForLine = async (client, queryString, lastRequestFile) => {
-  let { sinceId, numberOfRequests } = await getLastRequestInfo(lastRequestFile)
+const getTweetsForLine = async (client, queryString) => {
+  let { sinceId, numberOfRequests } = await getLastRequestInfo('requests')
 
   numberOfRequests = await checkForTimeout(numberOfRequests)
 
@@ -33,7 +33,7 @@ const getTweetsForLine = async (client, queryString, lastRequestFile) => {
   sinceId = lastTweet.id
   numberOfRequests += 1
 
-  await storeRequestInfo(numberOfRequests, sinceId, lastRequestFile)
+  await storeRequestInfo('requests', numberOfRequests, sinceId)
 
   return map((tweet) => getTweetInfo(tweet), results)
 }
