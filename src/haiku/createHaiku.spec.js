@@ -1,27 +1,33 @@
 import test from 'ava'
 import stu from 'stu'
 
-test('', async (t) => {
-  let createHaiku, getLine, getKeyword
+test.beforeEach((t)=> {
   stu((mock, require) => {
-    getLine = mock('../utils/findLineForHaiku').default
-    getKeyword = mock('../utils/keywords').default
-    createHaiku = require('./createHaiku').default
-  }).mock()
+    const findTweets = mock('../tweets/findTweets').default
+    const getKeyword = mock('../utils/keywords').default
+    const createHaiku = require('./createHaiku').default
 
-  getLine.onFirstCall().resolves('first line')
-  getLine.onSecondCall().resolves('second line')
-  getLine.onThirdCall().resolves('third line')
+    t.context = {
+      ...t.context,
+      findTweets,
+      getKeyword,
+      createHaiku
+    }
+  }).mock()
+})
+
+test.serial('keeps looking for tweets even when there is no response from twitter', async (t) => {
+  const { createHaiku, findTweets, getKeyword } = t.context
+  findTweets.onCall(0).resolves([{id: '1', text: 'this is the first line'}])
+  findTweets.onCall(1).resolves([{id: '2', text: 'this is the second line ha'}])
+  const error = new Error()
+  error.code = 'ECONNRESET'
+  findTweets.onCall(2).throws(error)
+  findTweets.onCall(3).resolves([{id: '3', text: 'this is the third line'}])
   getKeyword.returns('keyword')
 
   const haiku = await createHaiku()
 
-  t.is(getLine.callCount, 3)
-  const firstCall = getLine.args[0]
-  const secondCall = getLine.args[1]
-  const thirdCall = getLine.args[2]
-  t.deepEqual(firstCall, [{ client: undefined, keyword: 'keyword', numberOfSyllables: 5 }])
-  t.deepEqual(secondCall, [{ client: undefined, keyword: 'keyword', numberOfSyllables: 7 }])
-  t.deepEqual(thirdCall, [{ client: undefined, keyword: 'keyword', numberOfSyllables: 5 }])
+  t.is(findTweets.callCount, 4)
   t.is(haiku.length, 3)
 })

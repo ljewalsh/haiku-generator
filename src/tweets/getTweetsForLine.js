@@ -23,19 +23,27 @@ const getTweetInfo = (tweet) => {
 }
 
 const getTweetsForLine = async (client, queryString) => {
-  let { sinceId, numberOfRequests } = await getLastRequestInfo('requests')
+  try {
+    let { sinceId, numberOfRequests } = await getLastRequestInfo('requests')
 
   numberOfRequests = await checkForTimeout(numberOfRequests)
 
   const results = await findTweets(client, queryString, sinceId)
 
   const lastTweet = last(results)
-  sinceId = lastTweet.id
-  numberOfRequests += 1
+    sinceId = lastTweet.id
+    numberOfRequests += 1
 
-  await storeRequestInfo('requests', numberOfRequests, sinceId)
+    await storeRequestInfo('requests', numberOfRequests, sinceId)
 
-  return map((tweet) => getTweetInfo(tweet), results)
+    return map((tweet) => getTweetInfo(tweet), results)
+  }
+  catch(err){
+    if (err.code !== 'ECONNRESET' && err.name !== 'MongoNetworkError') {
+      throw err
+    }
+    return []
+  }
 }
 
 export default getTweetsForLine
