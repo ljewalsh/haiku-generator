@@ -1,12 +1,12 @@
 import Promise from 'bluebird'
-import getTweetsForLine from '../tweets/getTweetsForLine'
+import handleTweetRequest from '../tweets/handleTweetRequest'
 import getNumberOfSyllables from './getSyllableCount'
 import { saveItem } from '../database'
 
 const findLineForHaiku = async ({ client, keyword, numberOfSyllables }) => {
   let line = ''
     while (line === '' ) {
-        const tweets = await getTweetsForLine(client, keyword)
+        const tweets = await handleTweetRequest(client, keyword)
         await Promise.each(tweets, async (tweet) => {
           const numberOfSyllablesInTweet = getNumberOfSyllables(tweet.text)
           if (numberOfSyllablesInTweet === numberOfSyllables) {

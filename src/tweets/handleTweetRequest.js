@@ -22,7 +22,7 @@ const getTweetInfo = (tweet) => {
   }
 }
 
-const getTweetsForLine = async (client, queryString) => {
+const handleTweetRequest = async (client, queryString) => {
   try {
     let { sinceId, numberOfRequests } = await getLastRequestInfo('requests')
 
@@ -46,4 +46,4 @@ const getTweetsForLine = async (client, queryString) => {
   }
 }
 
-export default getTweetsForLine
+export default handleTweetRequest

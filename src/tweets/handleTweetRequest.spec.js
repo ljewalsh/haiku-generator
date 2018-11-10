@@ -2,12 +2,12 @@ import test from 'ava'
 import stu from 'stu'
 
 test.beforeEach(async (t) => {
-  let getTweetsForLine, findTweets, storeRequestInfo, getLastRequestInfo
+  let handleTweetRequest, findTweets, storeRequestInfo, getLastRequestInfo
   stu((mock, require) => {
     findTweets = mock('./findTweets').default
     getLastRequestInfo = mock('../utils/lastRequest/getLastRequestInfo').default
     storeRequestInfo = mock('../utils/lastRequest/storeRequestInfo').default
-    getTweetsForLine = require('./getTweetsForLine').default
+    handleTweetRequest = require('./handleTweetRequest').default
   }).mock()
 
   const queryString = 'node'
@@ -22,7 +22,7 @@ test.beforeEach(async (t) => {
 
   t.context = {
     ...t.context,
-    getTweetsForLine,
+    handleTweetRequest,
     storeRequestInfo,
     getLastRequestInfo,
     findTweets,
@@ -35,13 +35,13 @@ test.beforeEach(async (t) => {
 
 test('findTweets in called by the function with the correct args', async (t) => {
   const {
-    getTweetsForLine,
+    handleTweetRequest,
     findTweets,
     queryString,
     firstSinceId
   } = t.context
 
-  await getTweetsForLine(null, queryString)
+  await handleTweetRequest(null, queryString)
 
   t.is(findTweets.callCount, 1)
 
@@ -51,14 +51,14 @@ test('findTweets in called by the function with the correct args', async (t) => 
 
 test('storeRequestInfo is called with the correct args', async (t) => {
   const {
-    getTweetsForLine,
+    handleTweetRequest,
     storeRequestInfo,
     queryString,
     secondSinceId,
     numberOfRequests
   } = t.context
 
-  await getTweetsForLine(null, queryString)
+  await handleTweetRequest(null, queryString)
   t.is(storeRequestInfo.callCount, 1)
 
   const expectedStoreRequestInfoArgs = [ 'requests', numberOfRequests + 1, secondSinceId ]
