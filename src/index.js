@@ -6,25 +6,18 @@ import createTwitterClient from './tweets/createTwitterClient'
 
 const twitterClient = createTwitterClient(keys)
 
+
 const runGenerator = async () => {
-  const haiku = await createHaiku(twitterClient)
-  await saveItem('haikus', haiku)
-  console.log(haiku)
+  const run = true
+  while (run) {
+    await createTable('haikus')
+    await createTable('tweets')
+    await createTable('requests')
+    const haiku = await createHaiku(twitterClient)
+    //await saveItem('haikus', haiku)
+    console.log(haiku)
+  }
 }
 
-const job = new CronJob({
-  cronTime: '7-59/15 * * * *',
-  onTick: () => {
-    return runGenerator()
-  },
-      start: false
-})
-
-createTable('haikus').then(
-  createTable('tweets').then(
-    runGenerator().then(
-      job.start()
-    )
-  )
-)
+runGenerator().then()
 
