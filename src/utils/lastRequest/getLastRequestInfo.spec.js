@@ -1,6 +1,6 @@
 import test from 'ava'
 import moment from 'moment'
-import {createTable, saveItem} from '../../database'
+import { createTable, saveItem } from '../../database'
 import getLastRequestInfo from './getLastRequestInfo'
 
 test.serial('Updates number of requests to 0 if the request occurred more than 15 minutes ago', async (t) => {

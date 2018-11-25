@@ -7,7 +7,6 @@ const makeFirstLetterLowercase = (line) => {
   return line.charAt(0).toLowerCase() + line.slice(1)
 }
 
-
 const findTweetForHaiku = async ({ client, query, numberOfSyllables }) => {
   let line = ''
   while (line === '') {

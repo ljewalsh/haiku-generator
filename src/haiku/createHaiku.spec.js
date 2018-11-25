@@ -24,7 +24,7 @@ test.serial('keeps looking for tweets even when there is no response from twitte
   error.code = 'ECONNRESET'
   findTweets.onCall(2).throws(error)
   findTweets.onCall(3).resolves([{ id: '3', text: 'syllables in it' }])
-  getTrends.returns([{query: 'fakeQuery'}])
+  getTrends.returns([{ query: 'fakeQuery' }])
 
   const haiku = await createHaiku()
 

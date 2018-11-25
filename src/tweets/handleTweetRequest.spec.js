@@ -74,6 +74,4 @@ test('can handle when no tweets are returned from findTweets', async (t) => {
   findTweets.resolves([])
   const tweets = await handleTweetRequest(null, queryString)
   t.deepEqual(tweets, [])
-
 })
-
