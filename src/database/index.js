@@ -1,13 +1,13 @@
 import { promisify } from 'bluebird'
 import { MongoClient } from 'mongodb'
 
-const url = "mongodb://localhost:27017/"
+const url = 'mongodb://localhost:27017/'
 
 const mongo = promisify(MongoClient)
 
 const connectToDb = async () => {
   const client = await mongo.connect(url)
-  return { client, db: client.db("mydb")}
+  return { client, db: client.db('mydb') }
 }
 
 const createTable = async (tableName) => {
@@ -31,7 +31,7 @@ const findItemById = async (tableName, itemId) => {
 
 const findLastItem = async (tableName) => {
   const { client, db } = await connectToDb()
-  const results = db.collection(tableName).find().limit(1).sort({$natural:-1})
+  const results = db.collection(tableName).find().limit(1).sort({ $natural: -1 })
   const result = results.next()
   client.close()
   return result

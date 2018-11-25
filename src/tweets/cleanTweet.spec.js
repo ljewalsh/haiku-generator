@@ -28,3 +28,24 @@ test('cleanTweet removes weird endings from tweets', (t) => {
   const expectedTweet = 'If I ever meet someone and they tell me they\'re from somewhere like Montana or South Dakota I\'m just gonna assume t…'
   t.is(cleanedTweet, expectedTweet)
 })
+
+test('cleanTweet removes newline characters from tweet', (t) => {
+  const tweet = 'Hey Human. . .\n we trapped'
+  const cleanedTweet = cleanTweet(tweet)
+  const expectedTweet = 'Hey Human. . .we trapped'
+  t.is(cleanedTweet, expectedTweet)
+})
+
+test('cleanTweet removes extra white spaces from tweet', (t) => {
+  const tweet = 'Hey Human. . .         we trapped'
+  const cleanedTweet = cleanTweet(tweet)
+  const expectedTweet = 'Hey Human. . .we trapped'
+  t.is(cleanedTweet, expectedTweet)
+})
+
+test('cleanTweet removes hashtags from tweet', (t) => {
+  const tweet = '#Baahubali director'
+  const cleanedTweet = cleanTweet(tweet)
+  const expectedTweet = 'director'
+  t.is(cleanedTweet, expectedTweet)
+})

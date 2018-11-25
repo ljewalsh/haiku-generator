@@ -19,7 +19,6 @@ test.beforeEach(async (t) => {
 
   findTweets.resolves([{ id: secondSinceId, text: 'fakeTweet' }])
 
-
   t.context = {
     ...t.context,
     handleTweetRequest,
@@ -62,5 +61,5 @@ test('storeRequestInfo is called with the correct args', async (t) => {
   t.is(storeRequestInfo.callCount, 1)
 
   const expectedStoreRequestInfoArgs = [ 'requests', numberOfRequests + 1, secondSinceId ]
-  t.deepEqual(storeRequestInfo.args, [ expectedStoreRequestInfoArgs  ])
+  t.deepEqual(storeRequestInfo.args, [ expectedStoreRequestInfoArgs ])
 })

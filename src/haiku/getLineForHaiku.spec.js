@@ -1,7 +1,7 @@
 import test from 'ava'
 import stu from 'stu'
 
-test.beforeEach((t)=> {
+test.beforeEach((t) => {
   stu((mock, require) => {
     const findTweet = mock('../tweets/findTweetForHaiku').default
     const getLineForHaiku = require('./getLineForHaiku.js').default
@@ -13,7 +13,6 @@ test.beforeEach((t)=> {
     }
   }).mock()
 })
-
 
 test('keeps searching until it finds a tweet that has the correct syllable structure', async (t) => {
   const { findTweet, getLineForHaiku } = t.context

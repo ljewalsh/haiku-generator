@@ -18,11 +18,13 @@
   "dependencies": {
     "@mishguru/eslint-config": "^4.1.0",
     "ava": "^0.25.0",
+    "await-sleep": "0.0.1",
     "babel-cli": "^6.26.0",
     "bluebird": "^3.5.1",
     "cron": "^1.4.1",
     "moment": "^2.22.2",
     "mongodb": "^3.1.6",
+    "npm": "^6.4.1",
     "ramda": "^0.25.0",
     "sleep": "^5.1.1",
     "stu": "^2.0.0",

@@ -8,7 +8,8 @@ import cleanTweet from './cleanTweet'
 const checkForTimeout = async (numberOfRequests) => {
   if (numberOfRequests === 180) {
     console.log('waiting request timeout')
-    await sleep.sleep(900)
+    await sleep.sleep(10)
+    console.log('waited request timeout')
     return 0
   }
   return numberOfRequests
@@ -24,21 +25,20 @@ const getTweetInfo = (tweet) => {
 
 const handleTweetRequest = async (client, queryString) => {
   try {
-    let { sinceId, numberOfRequests } = await getLastRequestInfo('requests')
+    let { numberOfRequests, sinceId } = await getLastRequestInfo('requests')
 
-  numberOfRequests = await checkForTimeout(numberOfRequests)
+    numberOfRequests = await checkForTimeout(numberOfRequests)
 
-  const results = await findTweets(client, queryString, sinceId)
+    const results = await findTweets(client, queryString, sinceId)
 
-  const lastTweet = last(results)
+    const lastTweet = last(results)
     sinceId = lastTweet.id
     numberOfRequests += 1
 
     await storeRequestInfo('requests', numberOfRequests, sinceId)
 
     return map((tweet) => getTweetInfo(tweet), results)
-  }
-  catch(err){
+  } catch (err) {
     if (err.code !== 'ECONNRESET' && err.name !== 'MongoNetworkError') {
       throw err
     }

@@ -12,8 +12,7 @@ test('should throw an error when the syllables of the tweet do not fit the haiku
   const tweet = 'here in California we have really extravagant purses'
   try {
     extractSyllables({ tweet, numberOfSyllables: 5 })
-  }
-  catch(err){
+  } catch (err) {
     t.is(err.message, 'tweet cannot be turned into haiku')
   }
 })

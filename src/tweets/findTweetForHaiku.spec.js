@@ -8,8 +8,8 @@ test('calls handleTweetRequest until it finds a tweet that has at least seven sy
     findTweetForHaiku = require('./findTweetForHaiku').default
   }).mock()
 
-  handleTweetRequest.onFirstCall().returns([{text: 'Here is a tweet'}])
-  handleTweetRequest.onSecondCall().returns([{text: 'Here is another tweet'}])
+  handleTweetRequest.onFirstCall().returns([{ text: 'Here is a tweet' }])
+  handleTweetRequest.onSecondCall().returns([{ text: 'Here is another tweet' }])
   handleTweetRequest.onThirdCall().returns([{ text: 'Here is a tweet that has exactly seventeen syllables in it' }])
 
   const line = await findTweetForHaiku({ client: 'fakeClient', keyword: 'fakeKeyword', numberOfSyllables: 7 })
