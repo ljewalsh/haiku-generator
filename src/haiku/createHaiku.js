@@ -1,6 +1,6 @@
-import getKeyword from '../utils/keywords'
 import getLineForHaiku from './getLineForHaiku'
 import extractSyllables from '../utils/extractSyllables'
+import getTrends from '../tweets/getTrends'
 
 const getThirdLine = async ({ client, keyword, firstLine }) => {
   let thirdLine = await getLineForHaiku({ client, numberOfSyllables: 5, keyword })
@@ -14,7 +14,9 @@ const getThirdLine = async ({ client, keyword, firstLine }) => {
 }
 
 const createHaiku = async (client) => {
-  const keyword = getKeyword()
+  const trends = await getTrends(client)
+  const trend = trends[0]
+  const keyword = trend.query
 
   try {
     const firstLine = await getLineForHaiku({ client, numberOfSyllables: 5, keyword })
