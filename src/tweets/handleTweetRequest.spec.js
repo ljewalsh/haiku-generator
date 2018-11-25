@@ -2,46 +2,43 @@ import test from 'ava'
 import stu from 'stu'
 
 test.beforeEach(async (t) => {
-  let getTweetsForLine, findTweets, storeRequestInfo, getLastRequestInfo
+  let handleTweetRequest, findTweets, storeRequestInfo, getLastRequestInfo
   stu((mock, require) => {
     findTweets = mock('./findTweets').default
     getLastRequestInfo = mock('../utils/lastRequest/getLastRequestInfo').default
     storeRequestInfo = mock('../utils/lastRequest/storeRequestInfo').default
-    getTweetsForLine = require('./getTweetsForLine').default
+    handleTweetRequest = require('./handleTweetRequest').default
   }).mock()
 
   const queryString = 'node'
-  const firstSinceId = 12
-  const secondSinceId = 13
   const numberOfRequests = 0
+  const firstSinceId = 12
   getLastRequestInfo.resolves({ sinceId: firstSinceId, numberOfRequests })
   storeRequestInfo.resolves()
 
-  findTweets.resolves([{ id: secondSinceId, text: 'fakeTweet' }])
-
-
   t.context = {
     ...t.context,
-    getTweetsForLine,
+    handleTweetRequest,
     storeRequestInfo,
     getLastRequestInfo,
     findTweets,
     numberOfRequests,
     queryString,
-    firstSinceId,
-    secondSinceId
+    firstSinceId
   }
 })
 
 test('findTweets in called by the function with the correct args', async (t) => {
   const {
-    getTweetsForLine,
+    handleTweetRequest,
     findTweets,
     queryString,
     firstSinceId
   } = t.context
 
-  await getTweetsForLine(null, queryString)
+  findTweets.resolves([{ id: firstSinceId, text: 'fakeTweet' }])
+
+  await handleTweetRequest(null, queryString)
 
   t.is(findTweets.callCount, 1)
 
@@ -51,16 +48,32 @@ test('findTweets in called by the function with the correct args', async (t) => 
 
 test('storeRequestInfo is called with the correct args', async (t) => {
   const {
-    getTweetsForLine,
+    handleTweetRequest,
     storeRequestInfo,
     queryString,
-    secondSinceId,
-    numberOfRequests
+    numberOfRequests,
+    findTweets
   } = t.context
 
-  await getTweetsForLine(null, queryString)
+  const secondSinceId = 13
+  findTweets.resolves([{ id: secondSinceId, text: 'fakeTweet' }])
+  await handleTweetRequest(null, queryString)
   t.is(storeRequestInfo.callCount, 1)
 
   const expectedStoreRequestInfoArgs = [ 'requests', numberOfRequests + 1, secondSinceId ]
-  t.deepEqual(storeRequestInfo.args, [ expectedStoreRequestInfoArgs  ])
+  t.deepEqual(storeRequestInfo.args, [ expectedStoreRequestInfoArgs ])
 })
+
+test('can handle when no tweets are returned from findTweets', async (t) => {
+  const {
+    handleTweetRequest,
+    queryString,
+    findTweets
+  } = t.context
+
+  findTweets.resolves([])
+  const tweets = await handleTweetRequest(null, queryString)
+  t.deepEqual(tweets, [])
+
+})
+

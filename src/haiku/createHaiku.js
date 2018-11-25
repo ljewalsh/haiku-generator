@@ -1,22 +1,24 @@
-import findLineForHaiku from '../utils/findLineForHaiku'
 import getKeyword from '../utils/keywords'
+import findTweetForHaiku from './findTweetForHaiku'
+
+const getThirdTweet = async ({ client, keyword, firstLine }) => {
+  let thirdLine = await findTweetForHaiku({ client, numberOfSyllables: 5, keyword })
+
+  while (thirdLine === firstLine) {
+    thirdLine = await findTweetForHaiku({ client, numberOfSyllables: 5, keyword })
+  }
+
+  return thirdLine
+}
 
 const createHaiku = async (client) => {
   const keyword = getKeyword()
+  
+    const firstLine = await findTweetForHaiku({ client, numberOfSyllables: 5, keyword })
+    const secondLine = await findTweetForHaiku({ client, numberOfSyllables: 7, keyword })
+    const thirdLine = await getThirdTweet({ client, keyword, firstLine, secondLine })
 
-  try {
-    const firstLine = await findLineForHaiku({ client, keyword, numberOfSyllables: 5 })
-    const secondLine = await findLineForHaiku({ client, keyword, numberOfSyllables: 7 })
-    let thirdLine = await findLineForHaiku({ client, keyword, numberOfSyllables: 5 })
-
-    while (thirdLine === firstLine){
-      thirdLine = await findLineForHaiku({ client, keyword, numberOfSyllables: 5 })
-    }
-
-    return [ firstLine, secondLine, thirdLine ]
-  } catch (err) {
-    throw new Error(err)
-  }
+    return firstLine + '\n' + secondLine + '\n' + thirdLine
 }
 
 export default createHaiku

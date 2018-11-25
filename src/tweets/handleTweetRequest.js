@@ -8,7 +8,8 @@ import cleanTweet from './cleanTweet'
 const checkForTimeout = async (numberOfRequests) => {
   if (numberOfRequests === 180) {
     console.log('waiting request timeout')
-    await sleep.sleep(900)
+    await sleep.sleep(10)
+    console.log('waited request timeout')
     return 0
   }
   return numberOfRequests
@@ -22,23 +23,25 @@ const getTweetInfo = (tweet) => {
   }
 }
 
-const getTweetsForLine = async (client, queryString) => {
+const handleTweetRequest = async (client, queryString) => {
   try {
-    let { sinceId, numberOfRequests } = await getLastRequestInfo('requests')
+    let { numberOfRequests, sinceId } = await getLastRequestInfo('requests')
 
-  numberOfRequests = await checkForTimeout(numberOfRequests)
+    numberOfRequests = await checkForTimeout(numberOfRequests)
 
-  const results = await findTweets(client, queryString, sinceId)
+    const results = await findTweets(client, queryString, sinceId)
 
-  const lastTweet = last(results)
-    sinceId = lastTweet.id
-    numberOfRequests += 1
+    const lastTweet = last(results)
+    if (lastTweet) {
+      sinceId = lastTweet.id
+      numberOfRequests += 1
 
-    await storeRequestInfo('requests', numberOfRequests, sinceId)
+      await storeRequestInfo('requests', numberOfRequests, sinceId)
 
-    return map((tweet) => getTweetInfo(tweet), results)
-  }
-  catch(err){
+      return map((tweet) => getTweetInfo(tweet), results)
+    }
+    return []
+  } catch (err) {
     if (err.code !== 'ECONNRESET' && err.name !== 'MongoNetworkError') {
       throw err
     }
@@ -46,4 +49,4 @@ const getTweetsForLine = async (client, queryString) => {
   }
 }
 
-export default getTweetsForLine
+export default handleTweetRequest
