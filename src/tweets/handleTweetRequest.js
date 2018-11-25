@@ -32,12 +32,15 @@ const handleTweetRequest = async (client, queryString) => {
     const results = await findTweets(client, queryString, sinceId)
 
     const lastTweet = last(results)
-    sinceId = lastTweet.id
-    numberOfRequests += 1
+    if (lastTweet) {
+      sinceId = lastTweet.id
+      numberOfRequests += 1
 
-    await storeRequestInfo('requests', numberOfRequests, sinceId)
+      await storeRequestInfo('requests', numberOfRequests, sinceId)
 
-    return map((tweet) => getTweetInfo(tweet), results)
+      return map((tweet) => getTweetInfo(tweet), results)
+    }
+    return []
   } catch (err) {
     if (err.code !== 'ECONNRESET' && err.name !== 'MongoNetworkError') {
       throw err

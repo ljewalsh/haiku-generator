@@ -11,13 +11,10 @@ test.beforeEach(async (t) => {
   }).mock()
 
   const queryString = 'node'
-  const firstSinceId = 12
-  const secondSinceId = 13
   const numberOfRequests = 0
+  const firstSinceId = 12
   getLastRequestInfo.resolves({ sinceId: firstSinceId, numberOfRequests })
   storeRequestInfo.resolves()
-
-  findTweets.resolves([{ id: secondSinceId, text: 'fakeTweet' }])
 
   t.context = {
     ...t.context,
@@ -27,8 +24,7 @@ test.beforeEach(async (t) => {
     findTweets,
     numberOfRequests,
     queryString,
-    firstSinceId,
-    secondSinceId
+    firstSinceId
   }
 })
 
@@ -39,6 +35,8 @@ test('findTweets in called by the function with the correct args', async (t) => 
     queryString,
     firstSinceId
   } = t.context
+
+  findTweets.resolves([{ id: firstSinceId, text: 'fakeTweet' }])
 
   await handleTweetRequest(null, queryString)
 
@@ -53,13 +51,29 @@ test('storeRequestInfo is called with the correct args', async (t) => {
     handleTweetRequest,
     storeRequestInfo,
     queryString,
-    secondSinceId,
-    numberOfRequests
+    numberOfRequests,
+    findTweets
   } = t.context
 
+  const secondSinceId = 13
+  findTweets.resolves([{ id: secondSinceId, text: 'fakeTweet' }])
   await handleTweetRequest(null, queryString)
   t.is(storeRequestInfo.callCount, 1)
 
   const expectedStoreRequestInfoArgs = [ 'requests', numberOfRequests + 1, secondSinceId ]
   t.deepEqual(storeRequestInfo.args, [ expectedStoreRequestInfoArgs ])
 })
+
+test('can handle when no tweets are returned from findTweets', async (t) => {
+  const {
+    handleTweetRequest,
+    queryString,
+    findTweets
+  } = t.context
+
+  findTweets.resolves([])
+  const tweets = await handleTweetRequest(null, queryString)
+  t.deepEqual(tweets, [])
+
+})
+
