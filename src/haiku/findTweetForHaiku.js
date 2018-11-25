@@ -8,10 +8,10 @@ const makeFirstLetterLowercase = (line) => {
 }
 
 
-const findTweetForHaiku = async ({ client, keyword, numberOfSyllables }) => {
+const findTweetForHaiku = async ({ client, query, numberOfSyllables }) => {
   let line = ''
   while (line === '') {
-    const tweets = await handleTweetRequest(client, keyword)
+    const tweets = await handleTweetRequest(client, query)
     await Promise.each(tweets, async (tweet) => {
       const numberOfSyllablesInTweet = getNumberOfSyllables(tweet.text)
       if (numberOfSyllablesInTweet === numberOfSyllables) {
