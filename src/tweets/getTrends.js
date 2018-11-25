@@ -1,6 +1,6 @@
 const getTrends = async (client) => {
-  const res = await client.get('trends/place', { id: '23424977'})
-  return res[0].trends
+  const results = await client.get('trends/place', { id: '23424916'})
+  return results[0].trends
 }
 
 export default getTrends

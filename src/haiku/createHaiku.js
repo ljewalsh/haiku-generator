@@ -13,7 +13,7 @@ const getThirdTweet = async ({ client, query, firstLine }) => {
 
 const createHaiku = async (client) => {
   const trends = await getTrends(client)
-  const trend = trends[0]
+  const trend = trends[Math.floor(Math.random()*trends.length)]
   const query = trend.query
   
     const firstLine = await findTweetForHaiku({ client, numberOfSyllables: 5, query })
