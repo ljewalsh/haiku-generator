@@ -8,7 +8,7 @@ import cleanTweet from './cleanTweet'
 const checkForTimeout = async (numberOfRequests) => {
   if (numberOfRequests === 180) {
     console.log('waiting request timeout')
-    await sleep.sleep(10)
+    await sleep.sleep(900)
     console.log('waited request timeout')
     return 0
   }
